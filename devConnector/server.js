@@ -1,28 +1,33 @@
 const express = require("express");
-const mongoose = require("mongoose");
 
-const users = require("./routes/api/users");
-const profile = require("./routes/api/profile");
-const posts = require("./routes/api/posts");
+// the config package(dependency we downloaded) stores the variables that are accessible by all your program's files
+// "db" is another one of your js files and is in the config folder
+// so the file path is ./config/db
+// the ./ returns you to the devconnector folder (the root, the beginning)
+const connectDB = require("./config/db");
 
 const app = express();
 
-//  DB Congig
-const db = require("./config/keys").mongoURI;
+// connect database
+// looks like it takes the const connectDB variable and uses it to connect to the database. That variable does lead you to the db.js file where you setup how you connect to the database, and then export at the end with modeule.exports
+connectDB();
 
 // // Connect to MongoDB
-mongoose
-  .connect(db, { useNewUrlParser: true })
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
+// mongoose
+//   .connect(db, { useNewUrlParser: true })
+//   .then(() => console.log("MongoDB Connected"))
+//   .catch(err => console.log(err));
 
-app.get("/", (req, res) => res.send("Hello World!"));
+app.get("/", (req, res) => res.send("API Running"));
 
 // Use routes
-app.use("/api/users", users);
-app.use("/api/profile", profile);
-app.use("/api/posts", posts);
+// app.use("/api/users", users);
+// app.use("/api/profile", profile);
+// app.use("/api/posts", posts);
 
-const port = process.env.PORT || 5000;
+// when we deploy to heroku, this is where it gets the port number
+// locally, if there is no default environment set, it defaults to localhost:5000
+const PORT = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// when you connect to the server, this will print out this message
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
