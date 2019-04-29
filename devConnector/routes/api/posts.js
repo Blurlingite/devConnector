@@ -2,17 +2,19 @@ const express = require("express"); // we need express to use routers
 
 const router = express.Router();
 
-// we can do router.post() etc. depending on what kind of HTTP you need to use
-
-// we don't need to change "/test" since the url will be /api/profile now
-
-// @route GET api/posts/test
-// @desc  Tests posts route
+// @route   GET api/posts
+// @desc    Test route
 // @access  Public
-router.get("/test", (req, res) => res.json({ msg: "Posts Works" }));
-// res.json() will output json. Automatically serves a status of 200, which means everything is ok. We will use Postman to test it
+router.get("/", (req, res) => {
+  // console.log(req.body);
+  res.send("Posts route");
+});
+// we put req.body in console.log because req.body is the object with all the info. We want to print it in the console so we see what got the right thing
+
+// Public access means they don't need a json web token to perform this code
+// Otherwise you'll get an unauthorized access message
 
 // we have to export the router in order for server.js to pick it up
 module.exports = router;
 
-// test out this URL in the browser to see if you get the JSON message http://localhost:5000/api/posts/test
+// test out this URL in the browser to see if you get the JSON message http://localhost:5000/api/users/test

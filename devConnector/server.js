@@ -21,9 +21,11 @@ connectDB();
 app.get("/", (req, res) => res.send("API Running"));
 
 // Use routes
-// app.use("/api/users", users);
-// app.use("/api/profile", profile);
-// app.use("/api/posts", posts);
+// what this will do is make the endpoint you passed in (the first string) pertain to the '/' in the router.get() in users.js as dictated by the second parameter you passed in here. You don't need to put the ".js" extension on users here
+app.use("/api/users", require("./routes/api/users"));
+app.use("/api/auth", require("./routes/api/auth"));
+app.use("/api/profile", require("./routes/api/profile"));
+app.use("/api/posts", require("./routes/api/posts"));
 
 // when we deploy to heroku, this is where it gets the port number
 // locally, if there is no default environment set, it defaults to localhost:5000
