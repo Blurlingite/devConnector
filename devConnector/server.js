@@ -12,11 +12,10 @@ const app = express();
 // looks like it takes the const connectDB variable and uses it to connect to the database. That variable does lead you to the db.js file where you setup how you connect to the database, and then export at the end with modeule.exports
 connectDB();
 
-// // Connect to MongoDB
-// mongoose
-//   .connect(db, { useNewUrlParser: true })
-//   .then(() => console.log("MongoDB Connected"))
-//   .catch(err => console.log(err));
+// Init Middleware (included with Express)
+// So we can just use express.json()
+// This allos us to get the data in req.body in users.js in the router.post()
+app.use(express.json({ extended: false }));
 
 app.get("/", (req, res) => res.send("API Running"));
 
