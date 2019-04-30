@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+// const Schema = mongoose.Schema;
 
 // Create Schema. This is like MySQL where you declare the datatypes of the fields and if they are required
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   password: {
     type: String,
@@ -26,4 +27,8 @@ const UserSchema = new Schema({
   }
 });
 
-module.exports = User = mongoose.model("users", UserSchema);
+// "user" is the name we give it now
+// UserSchema is the value
+// Similar to models in Controllers in Java
+// This is the User model
+module.exports = User = mongoose.model("user", UserSchema);
