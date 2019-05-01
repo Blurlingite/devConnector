@@ -8,6 +8,12 @@ const gravatar = require("gravatar");
 // bring in bcrypt
 const bcrypt = require("bcryptjs");
 
+// bring in json webtoken
+const jwt = require("jsonwebtoken");
+
+// bring in config so we can use the jwtSecret when we sign off on a json web token
+const config = require("config");
+
 // bring in check and validationResult from express-validator package we downloaded to enable validation
 const { check, validationResult } = require("express-validator/check");
 
@@ -112,7 +118,37 @@ router.post(
       await user.save();
 
       // return the json web token so that in the front end when the user registers, we want them to be logged in right away, and in order to be logged in, you have to have that json web token
-      res.send("User registered");
+      // without the token, the user cannot be authenticated
+
+      // create our payload. Payload is the data that uniqul=ely identifies the User object, which is the id in this case
+
+      // the payload will be an object    user:   ----> This comes from the user variable above, which eventually gets saved with user.save()
+
+      // that object has an id field (which was made for us even though it is not a field in User.js)      id:
+      // that id field needs to be given the id value that MongoDB gave it with user.id
+      const payload = {
+        user: {
+          id: user.id // even though the id field is _id in the online database, mongoose lets us just use ".id" instead of "._id"
+        }
+      };
+
+      // in order to use json web tokens we must sign off with jwt.sign
+      // it takes 2 required parameters and 2 optional parameter:
+      // 1) the payload (contained by our variable)
+      // 2) the secret
+      // 3) a set of options, in this case, an expiration
+      // 4) a callback
+      jwt.sign(
+        payload,
+        config.get("jwtSecret"),
+        { expiresIn: 360000 }, // 3600 seconds, which is 1 hour is the expiration
+        (err, token) => {
+          // this callback takes in a possible error (err) and the json webtoken itself (token), but this code block won't fail if only 1 of the parameters gets an argument
+
+          if (err) throw err; // if there's an error, throw it
+          res.json({ token }); // if there is no error, send this data (the token, back to the client (web browser). You could send some other data like the id but it's not necessary)
+        }
+      );
     } catch (err) {
       // the error will most likely be a server error
       console.error(err.message);

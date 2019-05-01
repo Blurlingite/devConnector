@@ -1,3 +1,5 @@
 {
-  "mongoURI": "mongodb+srv://blurlingite:vdj03@devconnector-pgj7g.mongodb.net/test?retryWrites=true"
+  "mongoURI": "mongodb+srv://blurlingite:vdj03@devconnector-pgj7g.mongodb.net/test?retryWrites=true",
+
+  "jwtSecret": "mysecrettoken"
 }
