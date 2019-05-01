@@ -124,6 +124,6 @@ const ProfileSchema = new mongoose.Schema({
 });
 
 // package all the code in this file (the const ProfileSchema) and add it to the model object (which you use in files outside this one just like with JSPs & Controllers in Java)
-// whenever you want to access the ProfileSchema (the Profile object) you will use "profile" NOT "Profile"
-// I guess the "Profile" is just the name of this file and that's why it is being assigned to module.exports
+// whenever you want to access the ProfileSchema (the Profile object), to plug in it's values for example, you will use "profile" NOT "Profile"
+// I guess the "Profile" is used when you declare a const variable in other file and make it that name. So in another file, you would have a variable called "const Profile"
 module.exports = Profile = mongoose.model("profile", ProfileSchema);

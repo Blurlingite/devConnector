@@ -30,5 +30,5 @@ const UserSchema = new mongoose.Schema({
 // "user" is the name we give it now
 // UserSchema is the value
 // Similar to models in Controllers in Java
-// This is the User model
+// This is the User model (see Profile.js for a better explanation of this line of code)
 module.exports = User = mongoose.model("user", UserSchema);
