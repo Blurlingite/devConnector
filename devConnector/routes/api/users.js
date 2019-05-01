@@ -30,7 +30,7 @@ const { check, validationResult } = require("express-validator/check");
 const User = require("../../models/User");
 
 // @route   POST api/users
-// @desc    Register User
+// @desc    Register User- this route allows a user to register
 // @access  Public
 
 // you can add words to the "/"" here if you want to change the endpoint
@@ -120,7 +120,7 @@ router.post(
       // return the json web token so that in the front end when the user registers, we want them to be logged in right away, and in order to be logged in, you have to have that json web token
       // without the token, the user cannot be authenticated
 
-      // create our payload. Payload is the data that uniqul=ely identifies the User object, which is the id in this case
+      // create our payload. Payload is the data that uniqulely identifies the User object, which is the id in this case
 
       // the payload will be an object    user:   ----> This comes from the user variable above, which eventually gets saved with user.save()
 
