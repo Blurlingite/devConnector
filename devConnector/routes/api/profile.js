@@ -223,6 +223,73 @@ router.delete("/", auth, async (req, res) => {
   }
 });
 
+// we use PUT instead of POST b/c we are updating a part of the profile object that is not a required field (the experience)
+// @route   PUT api/profile
+// @desc    Add profile experience
+// access Private
+
+router.put(
+  "/experience",
+  [
+    auth,
+    [
+      check("title", "Title is required")
+        .not()
+        .isEmpty(),
+      check("company", "Company is required")
+        .not()
+        .isEmpty(),
+      check("from", "From date is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // take all these fields from the request's body
+    // now any const that uses all these fields will get the values we got from the request's body and assign them to these fields (title, company, etc.)
+    const {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    } = req.body;
+
+    // uses the above const to fill in fields in this newExp object
+    const newExp = {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    };
+
+    try {
+      // find the profile by user ID from request's json webtoken
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      // "profile.experience" is the array of experiences
+      // unshift() will add the new experiences from "newExp" to the beginning rather than push() which adds it to the end
+      // this way, the most recent experiences are first
+      profile.experience.unshift(newExp);
+      await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
 // we have to export the router in order for server.js to pick it up
 module.exports = router;
 
