@@ -19,7 +19,8 @@ const connectDB = async () => {
     // the current string parser is outdated so we pass in { useNewUrlParser: true } as the second parameter
     await mongoose.connect(db, {
       useNewUrlParser: true,
-      useCreateIndex: true // gets rid of deprecation warning
+      useCreateIndex: true, // gets rid of deprecation warning
+      useFindAndModify: false // gets rid of findOne() deprecation warning
     });
 
     console.log("MongoDB Connected...");

@@ -156,6 +156,50 @@ router.post(
   }
 );
 
+// @route   GET api/profile
+// @desc    Get all profiles
+// access Public
+
+router.get("/", async (req, res) => {
+  try {
+    // we want the name and avatar too (they are part of a profile) which are part of the user model so we use populate("NAMEOFMODEL", ["fieldName1", "fieldName2", etc.])
+    // the find() method finds all of the model you specify (Profile)
+    const profiles = await Profile.find().populate("user", ["name", "avatar"]);
+    res.json(profiles);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// NOTICE: we put a : before user_id because user_id is a placeholder we made up, that will be passed a value (the user's ID)
+// @route   GET api/profile/user/:user_id
+// @desc    Get profile by user ID (not profile ID)
+// access Public
+
+router.get("/user/:user_id", async (req, res) => {
+  try {
+    // we want the name and avatar too (they are part of a profile) which are part of the user model so we use populate("NAMEOFMODEL", ["fieldName1", "fieldName2", etc.])
+    // we access the user ID from the URL sent by the request so we use "req.params.user_id" (user_id is what is in the URL)
+    const profile = await Profile.findOne({
+      user: req.params.user_id
+    }).populate("user", ["name", "avatar"]);
+
+    // if there is no profile for that userID, return a 400 error
+    if (!profile) return res.status(400).json({ msg: "Profile not found" });
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+
+    // if the user ID is too long to be a user ID, we don't want to say "Server Error" we want it to say "Profile not found"
+    // err.kind is assigned the ObjectId type so if the error has something to do with the ObjectId it will go into this if statement. It's the "kind" of error, an ObjectId error
+    if (err.kind == "ObjectId") {
+      return res.status(400).json({ msg: "Profile not found" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
+
 // we have to export the router in order for server.js to pick it up
 module.exports = router;
 
