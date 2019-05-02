@@ -200,6 +200,29 @@ router.get("/user/:user_id", async (req, res) => {
   }
 });
 
+// @route   DELETE api/profile
+// @desc    Delete profile, user & posts
+// access Private
+
+// we need "auth" because we have a json webtoken coming in with the request
+// json webtokens are used in updates and deletes
+router.delete("/", auth, async (req, res) => {
+  try {
+    // @todo - remove user's posts
+    // remove profile
+    // the "user.id" comes from the json webtoken that was sent in with the request. Part of json webtoken id the ObjectId (user ID)
+    await Profile.findOneAndRemove({ user: req.user.id });
+
+    // remove user
+    // NOTICE: we use "_id" because that is the field in the User object
+    await User.findOneAndRemove({ _id: req.user.id });
+    res.json({ msg: "User deleted" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 // we have to export the router in order for server.js to pick it up
 module.exports = router;
 
