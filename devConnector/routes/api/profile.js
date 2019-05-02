@@ -109,8 +109,50 @@ router.post(
     if (skills) {
       profileFields.skills = skills.split(",").map(skill => skill.trim());
     }
-    console.log(profileFields.skills);
-    res.send("Hello");
+
+    // Build social object
+
+    // now set the social field to an empty object, if you don't do this, you'll get an "undefined" error, it needs some value, so let it be an empty object for now
+    profileFields.social = {};
+
+    // The social field is an object made up of objects (youtube, twitter, etc.)
+    // This is slightly different than what we did with the skills field which is an array of objects(strings)
+    // So we, can't the youtube object with profileFields.youtube, we have to use profileFields.social.youtube
+    if (youtube) profileFields.social.youtube = youtube;
+    if (twitter) profileFields.social.twitter = twitter;
+    if (facebook) profileFields.social.facebook = facebook;
+    if (linkedin) profileFields.social.linkedin = linkedin;
+    if (instagram) profileFields.social.instagram = instagram;
+
+    try {
+      // findOne() & findOneAndUpdate are monggose methods() so we need to use "await"
+      // findOne() is a function available to all objects.
+      // Our object is called "Profile" b/c that is what we exported it as in Profile.js in the models folder
+      // We pass in the Profile object's user field (which will just hold the user's ID, not the whole user) and assign it req.user.id, which just grabs the user ID (user.id) from the request (req)
+      let profile = await Profile.findOne({ user: req.user.id });
+
+      // if the profile is found
+      if (profile) {
+        // Update the profile
+        profile = await Profile.findOneAndUpdate(
+          { user: req.user.id }, // User's ID
+          { $set: profileFields }, // uses the values in profileFields to update the profile by setting all the fields in the Profile object ("profile") with the fields in profileFields
+          { new: true } // to show that we are making changes to the profile???
+        );
+
+        // return the whole profile
+        return res.json(profile);
+      }
+
+      // if you could not find a profile, create it
+      profile = new Profile(profileFields);
+      // we save the Profile object using lowercase "profile", not uppercase "Profile" because is the model (for an object) and we need to save it on the instance of the model (profile)
+      await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
   }
 );
 
