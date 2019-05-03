@@ -224,7 +224,7 @@ router.delete("/", auth, async (req, res) => {
 });
 
 // we use PUT instead of POST b/c we are updating a part of the profile object that is not a required field (the experience)
-// @route   PUT api/profile
+// @route   PUT api/profile/experience
 // @desc    Add profile experience
 // access Private
 
@@ -309,6 +309,106 @@ router.delete("/experience/:exp_id", auth, async (req, res) => {
     profile.experience.splice(removeIndex, 1);
 
     // save the profile (if you don't, the experience won't be removed)
+    await profile.save();
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// XXXXXXXXXXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX
+
+// we use PUT instead of POST b/c we are updating a part of the profile object that is not a required field (the education)
+// @route   PUT api/profile/education
+// @desc    Add profile education
+// access Private
+
+router.put(
+  "/education",
+  [
+    auth,
+    [
+      check("school", "School is required")
+        .not()
+        .isEmpty(),
+      check("degree", "Degree is required")
+        .not()
+        .isEmpty(),
+      check("fieldofstudy", "Field of study is required")
+        .not()
+        .isEmpty(),
+      check("from", "From date is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // take all these fields from the request's body
+    // now any const that uses all these fields will get the values we got from the request's body and assign them to these fields (title, company, etc.)
+    const {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description
+    } = req.body;
+
+    // uses the above const to fill in fields in this newExp object
+    const newEdu = {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description
+    };
+
+    try {
+      // find the profile by user ID from request's json webtoken
+      const profile = await Profile.findOne({ user: req.user.id });
+
+      // "profile.education" is the array of experiences
+      // unshift() will add the new experiences from "newExp" to the beginning rather than push() which adds it to the end
+      // this way, the most recent experiences are first
+      profile.education.unshift(newEdu);
+      await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
+// @route   DELETE api/profile/education/:edu_id
+// @desc    Delete education from profile
+// access Private
+
+// "edu_id" is a just a placeholder so we need the ":"
+router.delete("/education/:edu_id", auth, async (req, res) => {
+  try {
+    // get profile by user ID
+    const profile = await Profile.findOne({ user: req.user.id });
+    // get the remove index (the ID of the education you want to remove)
+    const removeIndex = profile.education // target the education section of Profile object
+      .map(item => item.id) // go through all the educations and return the id BUT...
+      .indexOf(req.params.edu_id); // only pick the education with the education ID that came in with the request (and there should be one because in router.delete we have "edu_id" in there)
+
+    // we want to splice out the education by using it's ID (now stored in removeIndex)
+    // We want to remove just that 1 education so we put "1"
+    profile.education.splice(removeIndex, 1);
+
+    // save the profile (if you don't, the education won't be removed)
     await profile.save();
     res.json(profile);
   } catch (err) {
