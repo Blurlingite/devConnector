@@ -1,5 +1,10 @@
 const express = require("express"); // we need express to use routers
 
+// used when trying to get github repos (towards end of this page)
+const request = require("request");
+
+const config = require("config");
+
 const router = express.Router();
 
 // get code from auth.js in middleware folder so we can perform authentication
@@ -317,9 +322,6 @@ router.delete("/experience/:exp_id", auth, async (req, res) => {
   }
 });
 
-// XXXXXXXXXXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX// XXXXXXXXXXXXXXXXXXXXXXXX
-
 // we use PUT instead of POST b/c we are updating a part of the profile object that is not a required field (the education)
 // @route   PUT api/profile/education
 // @desc    Add profile education
@@ -411,6 +413,56 @@ router.delete("/education/:edu_id", auth, async (req, res) => {
     // save the profile (if you don't, the education won't be removed)
     await profile.save();
     res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   GET api/profile/github/:username
+// @desc    Get user's repos from Github
+// access Public  // is public b/c viewing a profile is a public thing, it should not be private
+
+router.get("/github/:username", (req, res) => {
+  try {
+    // an object with a uri field
+    const options = {
+      // make sure you use a backtick (`), not a quotation mark (' or "). Backticks let you plug in variables with ${}
+      uri: `https://api.github.com/users/${
+        req.params.username
+      }/repos?per_page=5&sort=created:asc&client_id=${config.get(
+        "githubClientId"
+      )}&client_secret=${config.get("githubSecret")}`,
+      method: "GET",
+      headers: { "user-agent": "node.js" }
+
+      // ABOUT THE uri:
+      // In req.params.username, "username" is a field that the github object uses for the username of a user. It's not something you define in your code
+      // The "?" separates the URL from the parameters that come after it
+      // The "per_page=5" limits the amount of repos that appear on each page to 5.        "per_page" is the key. "5" is the value
+      // The "&" is used to separate parameters in the URL
+      // "sort=created:asc" sorts the repos in ascending order.         "sort" is the key. "created:asc" has a key (created) and a value (asc) that both become the value for the outer key (sort)
+      // In "client_id=${config.get("githubClientId")"  client_id is another field github uses for the client ID.  We put a field for client ID in our default.json file in the config folder. So we use config.get() and plug in the name of the field we use to represent client ID (githubClientId) to get the client ID. We had to register this application at https://github.com/settings/developers/ to get the client ID and client secret values we put in default.json
+      // Same thing with client_secret=${config.get("githubSecret")}
+
+      // We have the method set to "GET" b/c we are getting repos from github
+      // we have headers that github requires us to have. We must say which technology we are using to access github's API, which is Node.js. We must assign that to the field github uses (user-agent)
+    };
+
+    // make the request
+    // 1st parameter is the options object we just made
+    // 2nd parameter is a callback that contains error(s), a response, and a body (data you get back from request)
+    request(options, (error, response, body) => {
+      if (error) console.error(error);
+
+      // if the response is not 200 (success) return a 404 error
+      if (response.statusCode !== 200) {
+        return res.status(404).json({ msg: "No Github profile found" });
+      }
+
+      // we use JSON.parse on the body so that it formats the data neatly into JSON format (instead of 1 super long string on a single line)
+      res.json(JSON.parse(body));
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
