@@ -57,10 +57,78 @@ router.post(
     }
   }
 );
-// we put req.body in console.log because req.body is the object with all the info. We want to print it in the console so we see what got the right thing
 
-// Public access means they don't need a json web token to perform this code
-// Otherwise you'll get an unauthorized access message
+// @route   GET api/posts
+// @desc    Get all post
+// @access  Private (is private b/c can't see posts page unless ur logged in)
+
+router.get("/", auth, async (req, res) => {
+  try {
+    // we use sort() and pass in date to sort by date. We want most recent first so we put -1
+    const posts = await Post.find().sort({ date: -1 });
+    res.json(posts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   GET api/posts/:id
+// @desc    Get post by Post ID
+// @access  Private (is private b/c can't see posts page unless ur logged in)
+
+router.get("/:id", auth, async (req, res) => {
+  try {
+    // req.params.id is the post ID from the URL (:id)
+    const post = await Post.findById(req.params.id);
+
+    // See if there's a post with that ID and if not return a 404 error
+    if (!post) {
+      res.status(404).json({ msg: "Post not found" });
+    }
+    res.json(post);
+  } catch (err) {
+    console.error(err.message);
+
+    // this is for if the ObjectID of Post object has too many or too little characters
+    if (err.kind == "ObjectId") {
+      res.status(404).json({ msg: "Post not found" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   DELETE api/posts/:id
+// @desc    Delete post by Post ID
+// @access  Private (is private b/c can't see posts page unless ur logged in)
+
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    // we use sort() and pass in date to sort by date. We want most recent first so we put -1
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      res.status(404).json({ msg: "Post not found" });
+    }
+
+    // Check user
+    // since req.user.is is a string and post.user is a number, you must convert post.user to a string to compare them
+    // If the ID of the user on this post is not the one that is logged in(determined by json webtoken sent on the request), return a 401 error
+    if (post.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "User not authorized" });
+    }
+
+    await post.remove();
+
+    res.json({ msg: "Post removed" });
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind == "ObjectId") {
+      res.status(404).json({ msg: "Post not found" });
+    }
+    res.status(500).send("Server Error");
+  }
+});
 
 // we have to export the router in order for server.js to pick it up
 module.exports = router;
