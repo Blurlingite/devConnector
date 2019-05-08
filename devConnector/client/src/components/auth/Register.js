@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   // "formData" will be the state for form elements
@@ -26,14 +27,15 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   // this will run when the form is submitted
-  const onSubmit = e => {
+  // need async b/c this is asynchronous
+  const onSubmit = async e => {
     e.preventDefault();
     // if the passwords don't match tell the user they don't match
     // else show the form data using formData
     if (password !== password2) {
       console.log("Passwords do not match");
     } else {
-      console.log(formData);
+      console.log("SUCCESS");
     }
   };
   return (
@@ -97,7 +99,7 @@ const Register = () => {
         <input type="submit" className="btn btn-primary" value="Register" />
       </form>
       <p className="my-1">
-        Already have an account? <a href="login.html">Sign In</a>
+        Already have an account? <Link to="/login">Sign In</Link>
       </p>
     </Fragment>
   );
