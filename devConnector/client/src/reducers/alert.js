@@ -30,7 +30,7 @@ export default function(state = initialState, action) {
     // this case will remove an alert by it's ID
     case REMOVE_ALERT:
       // we filter through the states array with filter(). For each alert ("alert"), grab the ID ("alert.id") and check to see if it is not equal to the payload ("!== payload")
-      // so we will filter out all but 1 alert and then return it
+      // so we will filter the alert by the ID we get and leave everything else(although this will run everytime when an alert is displayed on the webpage, so it will have nothing in it)
       // The payload in this case will just be an alert ID, that is how we can compare alert.id to payload with "alert.id !== payload"
       return state.filter(alert => alert.id !== payload);
     default:

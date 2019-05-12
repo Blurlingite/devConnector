@@ -1,7 +1,15 @@
 import React, { Fragment, useState } from "react";
+// used to connect React components to redux. You need to export it and the end of this file and put the component's name in parantheses
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+// import the action you want to use in this file
+// Whenever you imoprt an action (like "setAlert" above), you have to pass it into connect
+import { setAlert } from "../../actions/alert";
+// need this to use props
+import PropTypes from "prop-types";
 
-const Register = () => {
+// we pull out setAlert from props with {setAlert} so we don't need to keep writing "props.setAlert" we can just write "setAlert"
+const Register = ({ setAlert }) => {
   // "formData" will be the state for form elements
   // need a state for form elements b/c those fields could change
   // anything that can change or is dynamic needs a state
@@ -33,7 +41,13 @@ const Register = () => {
     // if the passwords don't match tell the user they don't match
     // else show the form data using formData
     if (password !== password2) {
-      console.log("Passwords do not match");
+      // "setAlert" comes from const Register as part of the props that gets automatically passed in. It will pass in this message to our actions (into our alert.js file in the "actions" folder) and perform the code in the alert.js file (which is, give it an ID and dispatch the action to the alert.js file in the "reducers" folder)
+      // In that alert.js file we declare 2 params: "msg" and "alertType"
+      // "Passwords do not match" is the msg that we put into alert.js
+      // "danger" is the alertType that we put into alert.js   We do this b/c in our CSS file we have a styling for alert.danger, so by passing in "danger" we can dynamically add it to an alert and apply that styling
+      // Also, by this point, when you open up the redux tab in your Chrome browser's console, you should see under the "State" tab we have alert set to an empty array
+      // When you attempt to sign up with passwords that don't match, you will see in the "Actions" tab of the Redux tab that SET_ALERT appears there (b/c it was dispatched). You can see the message "Passwords do not match" by opening the "payload" that also appears. There you can also see the alertType of "danger" and the ID that was given to that alert (by uuid which you imported in another file)
+      setAlert("Passwords do not match", "danger");
     } else {
       console.log("SUCCESS");
     }
@@ -105,4 +119,17 @@ const Register = () => {
   );
 };
 
-export default Register;
+// we are setting our proptypes here so when we export at the end of this file, these proptypes (setAlert) can be used by other files
+// shortcut: use "ptfr" to put "PropTypes.func.isRequired"
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired
+};
+// You need to export it and the end of this file and put the component's name in parantheses
+// Whenever you imoprt an action (like "setAlert" above), you have to pass it into connect
+// connect can also take in state you want to map as the 1st parameter. But if you don't want to put "null" as the 1st parameter
+// the 2nd parameter is the object with any actions you want to use (like "setAlert"). This will allow us to access "props.setAlert". The props come in at "const Register" at the top
+// we export setAlert here so that "setAlert" will be passed into other files as props
+export default connect(
+  null,
+  { setAlert }
+)(Register);
