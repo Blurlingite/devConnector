@@ -3,13 +3,16 @@ import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 // import the action you want to use in this file
-// Whenever you imoprt an action (like "setAlert" above), you have to pass it into connect
+// Whenever you import an action (like "setAlert" above), you have to pass it into the component's parameter list (const Register), your prop types (Register.propTypes) and connect() in the export statement
 import { setAlert } from "../../actions/alert";
+// import the register action from auth.js (don't forget to add it in all places needed (see above comments)
+import { register } from "../../actions/auth";
+
 // need this to use props
 import PropTypes from "prop-types";
 
 // we pull out setAlert from props with {setAlert} so we don't need to keep writing "props.setAlert" we can just write "setAlert"
-const Register = ({ setAlert }) => {
+const Register = ({ setAlert, register }) => {
   // "formData" will be the state for form elements
   // need a state for form elements b/c those fields could change
   // anything that can change or is dynamic needs a state
@@ -49,7 +52,9 @@ const Register = ({ setAlert }) => {
       // When you attempt to sign up with passwords that don't match, you will see in the "Actions" tab of the Redux tab that SET_ALERT appears there (b/c it was dispatched). You can see the message "Passwords do not match" by opening the "payload" that also appears. There you can also see the alertType of "danger" and the ID that was given to that alert (by uuid which you imported in another file)
       setAlert("Passwords do not match", "danger");
     } else {
-      console.log("SUCCESS");
+      // call the register action you imported in the import statement
+      // it takes in an object with name, email and password (which it gets values from the formData variable in this file.   formData holds what the user enters in the form on the webpage)
+      register({ name, email, password });
     }
   };
   return (
@@ -70,7 +75,7 @@ const Register = ({ setAlert }) => {
             value={name}
             // This will use the function in "const onChange". We call it with onChange() and pass in e
             onChange={e => onChange(e)}
-            required
+            // required
           />
         </div>
         <div className="form-group">
@@ -81,7 +86,7 @@ const Register = ({ setAlert }) => {
             value={email}
             // This will use the function in "const onChange". We call it with onChange() and pass in e
             onChange={e => onChange(e)}
-            required // used to display a message when user does not enter one
+            // required // used to display a message when user does not enter one
           />
           <small className="form-text">
             This site uses Gravatar so if you want a profile image, use a
@@ -96,7 +101,7 @@ const Register = ({ setAlert }) => {
             value={password}
             // This will use the function in "const onChange". We call it with onChange() and pass in e
             onChange={e => onChange(e)}
-            minLength="6"
+            // minLength="6"
           />
         </div>
         <div className="form-group">
@@ -107,7 +112,7 @@ const Register = ({ setAlert }) => {
             value={password2}
             // This will use the function in "const onChange". We call it with onChange() and pass in e
             onChange={e => onChange(e)}
-            minLength="6"
+            // minLength="6"
           />
         </div>
         <input type="submit" className="btn btn-primary" value="Register" />
@@ -120,16 +125,18 @@ const Register = ({ setAlert }) => {
 };
 
 // we are setting our proptypes here so when we export at the end of this file, these proptypes (setAlert) can be used by other files
+// like in connect() below, we need to add a proptype for each action we import in our above import statements
 // shortcut: use "ptfr" to put "PropTypes.func.isRequired"
 Register.propTypes = {
-  setAlert: PropTypes.func.isRequired
+  setAlert: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired
 };
 // You need to export it and the end of this file and put the component's name in parantheses
-// Whenever you imoprt an action (like "setAlert" above), you have to pass it into connect
+// Whenever you import an action (like "setAlert" above), you have to pass it into connect
 // connect can also take in state you want to map as the 1st parameter. But if you don't want to put "null" as the 1st parameter
 // the 2nd parameter is the object with any actions you want to use (like "setAlert"). This will allow us to access "props.setAlert". The props come in at "const Register" at the top
 // we export setAlert here so that "setAlert" will be passed into other files as props
 export default connect(
   null,
-  { setAlert }
+  { setAlert, register }
 )(Register);
