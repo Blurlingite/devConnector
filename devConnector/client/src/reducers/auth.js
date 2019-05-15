@@ -1,6 +1,11 @@
 // This file starts with Section 8 video 40
 // we created 2 new types in types.js for this file: REGISTER_SUCCESS & REGISTER_FAIL and we use this import to bring them in so we can use them
-import { REGISTER_SUCCESS, REGISTER_FAIL } from "../actions/types";
+import {
+  REGISTER_SUCCESS,
+  REGISTER_FAIL,
+  USER_LOADED,
+  AUTH_ERROR
+} from "../actions/types";
 
 // this is the initial state object, representing the initial state of auth.js
 const initialState = {
@@ -22,6 +27,14 @@ export default function(state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
+    case USER_LOADED:
+      return {
+        ...state,
+        isAuthenticated: true,
+        loading: false,
+        user: payload
+      };
+
     // when a register of a user is successful we want the website to log them in automatically. We get a JSON webtoken, so we put that in local storage under the name "token" with localStorage.setItem("token", payload.token)    This is a key-value pair, just like how we do in a hashmap in Java. We access the actual token with payload.token since it is part of the payload
     case REGISTER_SUCCESS:
       localStorage.setItem("token", payload.token);
@@ -33,6 +46,7 @@ export default function(state = initialState, action) {
       };
 
     case REGISTER_FAIL:
+    case AUTH_ERROR: // we want this case to do the same thing as case REGISTER_FAIL so we put right after it
       // if the register failed, remove the token that was generated (generated for the 1st time) so they can't login. They can still try to register again, but they'll get a new token instead
       // removeItem() only needs the key to remove the token
       localStorage.removeItem("token");

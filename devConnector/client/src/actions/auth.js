@@ -4,7 +4,37 @@ import axios from "axios";
 import { setAlert } from "./alert";
 
 // import these types from types.js
-import { REGISTER_SUCCESS, REGISTER_FAIL } from "./types";
+import {
+  REGISTER_SUCCESS,
+  REGISTER_FAIL,
+  USER_LOADED,
+  AUTH_ERROR
+} from "./types";
+
+import setAuthToken from "../utils/setAuthToken";
+// Load User
+export const loadUser = () => async dispatch => {
+  // check for token in localStorage and if it's there, pass it to setAuthToken so it can set that global x-auth-token header (in setAuthToken.js)
+  if (localStorage.token) {
+    setAuthToken(localStorage.token);
+  }
+  // make the request
+  try {
+    // try to get a response by hitting this endpoint (which requires a token which we set with setAuthToken above)
+    const res = await axios.get("/api/auth");
+
+    // dispatch the USER_LOADED type along with the data you got from response (res.data)
+    dispatch({
+      type: USER_LOADED,
+      payload: res.data
+    });
+  } catch (err) {
+    // dispatch AUTH_ERROR if there is an error
+    dispatch({
+      type: AUTH_ERROR
+    });
+  }
+};
 
 // This will register a User
 // It takes in an object that has a name,email & password
