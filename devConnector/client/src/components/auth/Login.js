@@ -1,12 +1,20 @@
+// This file is similar to Register.js   See those comments
 import React, { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
-const Login = () => {
+import { Link, Redirect } from "react-router-dom";
+// used to connect React components to redux. You need to export it and the end of this file and put the component's name in parantheses
+// We added this after making LOGIN_SUCCESS & LOGIN_FAIL types in types.js in the "actions" folder and adding it to auth.js in "actions" folder, then added it to the auth.js in the "reducers" folder and now we add it here
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { login } from "../../actions/auth";
+
+const Login = ({ login, isAuthenticated }) => {
   // "formData" will be the state for form elements
   // need a state for form elements b/c those fields could change
   // anything that can change or is dynamic needs a state
   // "setFormData" is like this.setState (where you can change values, change the state)
   // useState() will hold the default values
   // only need email and password b/c they are just trying to login
+
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -28,9 +36,17 @@ const Login = () => {
   // need async b/c this is asynchronous
   const onSubmit = async e => {
     e.preventDefault();
-
-    console.log("SUCCESS");
+    login(email, password);
   };
+
+  // Redirect if logged in
+  // We want tp make it that when we login, it redirects us
+  // react-router lets is use the Redirect tag once you bring it in with the import statement above
+  // it will redirect to the endpoint "/dashboard"
+  if (isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
+
   return (
     <Fragment>
       <h1 className="large text-primary">Sign In</h1>
@@ -72,4 +88,19 @@ const Login = () => {
   );
 };
 
-export default Login;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
+};
+
+// we just need to check isAuthenticated to see if we are authenticated with state.auth.isAuthenticated
+// we'll assign that to the isAuthenticated field
+// now isAuthenticated is a prop so we need to add it to Proptypes & const Login above
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+// See Register.js for comments
+export default connect(
+  mapStateToProps,
+  { login }
+)(Login);

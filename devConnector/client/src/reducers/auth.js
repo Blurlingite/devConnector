@@ -4,7 +4,9 @@ import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
   USER_LOADED,
-  AUTH_ERROR
+  AUTH_ERROR,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL
 } from "../actions/types";
 
 // this is the initial state object, representing the initial state of auth.js
@@ -37,6 +39,7 @@ export default function(state = initialState, action) {
 
     // when a register of a user is successful we want the website to log them in automatically. We get a JSON webtoken, so we put that in local storage under the name "token" with localStorage.setItem("token", payload.token)    This is a key-value pair, just like how we do in a hashmap in Java. We access the actual token with payload.token since it is part of the payload
     case REGISTER_SUCCESS:
+    case LOGIN_SUCCESS: // login will do the same as registering
       localStorage.setItem("token", payload.token);
       return {
         ...state, // all of whatever is currently in the state
@@ -47,8 +50,9 @@ export default function(state = initialState, action) {
 
     case REGISTER_FAIL:
     case AUTH_ERROR: // we want this case to do the same thing as case REGISTER_FAIL so we put right after it
-      // if the register failed, remove the token that was generated (generated for the 1st time) so they can't login. They can still try to register again, but they'll get a new token instead
-      // removeItem() only needs the key to remove the token
+    // if the register failed, remove the token that was generated (generated for the 1st time) so they can't login. They can still try to register again, but they'll get a new token instead
+    // removeItem() only needs the key to remove the token
+    case LOGIN_FAIL: // does the same thing as "REGISTER_FAIL"
       localStorage.removeItem("token");
       return {
         ...state, // all of whatever is currently in the state

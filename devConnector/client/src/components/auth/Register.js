@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 // used to connect React components to redux. You need to export it and the end of this file and put the component's name in parantheses
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 // import the action you want to use in this file
 // Whenever you import an action (like "setAlert" above), you have to pass it into the component's parameter list (const Register), your prop types (Register.propTypes) and connect() in the export statement
 import { setAlert } from "../../actions/alert";
@@ -12,7 +12,7 @@ import { register } from "../../actions/auth";
 import PropTypes from "prop-types";
 
 // we pull out setAlert from props with {setAlert} so we don't need to keep writing "props.setAlert" we can just write "setAlert"
-const Register = ({ setAlert, register }) => {
+const Register = ({ setAlert, register, isAuthenticated }) => {
   // "formData" will be the state for form elements
   // need a state for form elements b/c those fields could change
   // anything that can change or is dynamic needs a state
@@ -57,6 +57,15 @@ const Register = ({ setAlert, register }) => {
       register({ name, email, password });
     }
   };
+
+  // Redirect if registered
+  // We want tp make it that when we register, it redirects us
+  // react-router lets is use the Redirect tag once you bring it in with the import statement above
+  // it will redirect to the endpoint "/dashboard"
+  if (isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
+
   return (
     <Fragment>
       <h1 className="large text-primary">Sign Up</h1>
@@ -129,14 +138,23 @@ const Register = ({ setAlert, register }) => {
 // shortcut: use "ptfr" to put "PropTypes.func.isRequired"
 Register.propTypes = {
   setAlert: PropTypes.func.isRequired,
-  register: PropTypes.func.isRequired
+  register: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
 };
+
+// we just need to check isAuthenticated to see if we are authenticated with state.auth.isAuthenticated
+// we'll assign that to the isAuthenticated field
+// now isAuthenticated is a prop so we need to add it to Proptypes & const Register above
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
 // You need to export it and the end of this file and put the component's name in parantheses
 // Whenever you import an action (like "setAlert" above), you have to pass it into connect
 // connect can also take in state you want to map as the 1st parameter. But if you don't want to put "null" as the 1st parameter
 // the 2nd parameter is the object with any actions you want to use (like "setAlert"). This will allow us to access "props.setAlert". The props come in at "const Register" at the top
 // we export setAlert here so that "setAlert" will be passed into other files as props
 export default connect(
-  null,
+  mapStateToProps,
   { setAlert, register }
 )(Register);
