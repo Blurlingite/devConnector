@@ -6,7 +6,8 @@ import {
   USER_LOADED,
   AUTH_ERROR,
   LOGIN_SUCCESS,
-  LOGIN_FAIL
+  LOGIN_FAIL,
+  LOGOUT
 } from "../actions/types";
 
 // this is the initial state object, representing the initial state of auth.js
@@ -53,6 +54,7 @@ export default function(state = initialState, action) {
     // if the register failed, remove the token that was generated (generated for the 1st time) so they can't login. They can still try to register again, but they'll get a new token instead
     // removeItem() only needs the key to remove the token
     case LOGIN_FAIL: // does the same thing as "REGISTER_FAIL"
+    case LOGOUT:
       localStorage.removeItem("token");
       return {
         ...state, // all of whatever is currently in the state
