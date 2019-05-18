@@ -6,6 +6,8 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 // we must put the Alert tag above the container but above the Switch tag b/c the Switch tag can only have routes in it
 import Alert from "./components/layout/Alert";
+import Dashboard from "./components/dashboard/Dashboard";
+import PrivateRoute from "./components/routing/PrivateRoute";
 
 // Redux
 // need a provider so we can connect Redux to React, we will enclose our entire app (our React app) in a Provider tag
@@ -54,6 +56,8 @@ const App = () => {
               {/* This component will only show up when the URL ends with "/register" */}
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
+              {/* thanks to PrivateRoute whenever you logout, you cannot access the dashboard page anymore. PrivateRoute protects the dashboard page and will redirect you back to the Sign In page if you are not authenticated  */}
+              <PrivateRoute exact path="/dashboard" component={Dashboard} />
             </Switch>
           </section>
         </Fragment>
