@@ -1,5 +1,6 @@
 // Section 9 Lecture 45
-import { GET_PROFILE, PROFILE_ERROR } from "../actions/types";
+// CLEAR_PROFILE is used to clear a profile when logged out so old user's profile data is not still loaded into redux when you login with a different user
+import { GET_PROFILE, PROFILE_ERROR, CLEAR_PROFILE } from "../actions/types";
 
 // the initial state for profile (or most things would start out empty)
 //these are not fields on the Profile object
@@ -26,6 +27,13 @@ export default function(state = initialState, action) {
         ...state,
         error: payload,
         loading: false
+      };
+    case CLEAR_PROFILE:
+      return {
+        ...state,
+        profile: null, // clears profile
+        repos: [], // empty repos on the profile
+        loading: false // done loading
       };
     default:
       return state;
