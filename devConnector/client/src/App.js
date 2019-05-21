@@ -7,6 +7,8 @@ import Login from "./components/auth/Login";
 // we must put the Alert tag above the container but above the Switch tag b/c the Switch tag can only have routes in it
 import Alert from "./components/layout/Alert";
 import Dashboard from "./components/dashboard/Dashboard";
+import CreateProfile from "./components/profile-forms/CreateProfile";
+
 import PrivateRoute from "./components/routing/PrivateRoute";
 
 // Redux
@@ -52,12 +54,21 @@ const App = () => {
 
             {/* See Section 7 video 39 starting at 12:20 for a full explanation of how this Alert component is working in the backend */}
             <Alert />
+
+            {/* In this Switch tag, it will listen to URL endpoints (for example '/register' or '/create-profile', etc.) and depending on what URL endpoint it gets, it will show that URL's component */}
             <Switch>
               {/* This component will only show up when the URL ends with "/register" */}
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               {/* thanks to PrivateRoute whenever you logout, you cannot access the dashboard page anymore. PrivateRoute protects the dashboard page and will redirect you back to the Sign In page if you are not authenticated  */}
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
+
+              {/* When you click on Create Profile on the webpage you'll go to this URL: /create-profile and you will be shown the form in the CreateProfile component */}
+              <PrivateRoute
+                exact
+                path="/create-profile"
+                component={CreateProfile}
+              />
             </Switch>
           </section>
         </Fragment>
