@@ -1,10 +1,14 @@
 // Section 9 Lecture 47
 // each form inout should be a piece of state so we use the useState hook
 import React, { Fragment, useState } from "react";
+// "withRouter" to use the "history" object (also used in profile.js in the "actions folder"). It lets us to redirect from the action
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { createProfile } from "../../actions/profile";
 
-const CreateProfile = props => {
+// we pull out "createProfile" and "history" from the props object b/c that's all we need here
+const CreateProfile = ({ createProfile, history }) => {
   // see Register.js for more comments
 
   // are we setting these values to both formData & setFormData???
@@ -48,6 +52,12 @@ const CreateProfile = props => {
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const onSubmit = e => {
+    e.preventDefault();
+    // submit the action "createProfile" which creates a profile using data from a form (the "formData" variable we've been using) and the "history" object to redirect to another endpoint
+    createProfile(formData, history);
+  };
+
   return (
     <Fragment>
       <h1 className="large text-primary">Create Your Profile</h1>
@@ -56,7 +66,8 @@ const CreateProfile = props => {
         profile stand out
       </p>
       <small>* = required field</small>
-      <form className="form">
+      {/* onSubmit() is the const we made above */}
+      <form className="form" onSubmit={e => onSubmit(e)}>
         <div className="form-group">
           <select name="status" value={status} onChange={e => onChange(e)}>
             <option value="0">* Select Professional Status</option>
@@ -223,6 +234,12 @@ const CreateProfile = props => {
   );
 };
 
-CreateProfile.propTypes = {};
+CreateProfile.propTypes = {
+  createProfile: PropTypes.func.isRequired
+};
 
-export default CreateProfile;
+// we wrap "CreateProfile" in "withRouter" b/c we used the "history" object in that compopnent, otherwise we can't pass in the history object and use it from the action
+export default connect(
+  null,
+  { createProfile }
+)(withRouter(CreateProfile));
