@@ -16,6 +16,8 @@ const Profile = require("../../models/Profile");
 
 const User = require("../../models/User");
 
+const Post = require("../../models/Post");
+
 // @route   GET api/profile/me
 // @desc    Get current user's profile
 // @access  Private (b/c the user needs to have the token when they are logged in. Everything here assumes the user has logged in already)
@@ -213,7 +215,11 @@ router.get("/user/:user_id", async (req, res) => {
 // json webtokens are used in updates and deletes
 router.delete("/", auth, async (req, res) => {
   try {
-    // @todo - remove user's posts
+    // Remove user's posts
+
+    // use deleteMany() to delete all the posts by the user, and there might be hundreds, thousands, etc.
+    await Post.deleteMany({ user: req.user.id });
+
     // remove profile
     // the "user.id" comes from the json webtoken that was sent in with the request. Part of json webtoken id the ObjectId (user ID)
     await Profile.findOneAndRemove({ user: req.user.id });

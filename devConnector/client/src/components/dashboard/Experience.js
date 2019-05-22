@@ -4,8 +4,10 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 // "Moment" is used to format dates
 import Moment from "react-moment";
-// we will have the experiences passed in from the parent component (Dashboard.js)
-const Experience = ({ experience }) => {
+import { deleteExperience } from "../../actions/profile";
+
+// we will have the experiences passed in from the parent component (Dashboard.js) and we will call that array "experience"
+const Experience = ({ experience, deleteExperience }) => {
   // we have access to the experience array from what was passed in above ("experience")
   // we will loop through the array passed in and format each one in it's own <td>
   const experiences = experience.map(exp => (
@@ -27,7 +29,13 @@ const Experience = ({ experience }) => {
       </td>
 
       <td>
-        <button className="btn btn-danger">Delete</button>
+        {/* In this onClick, we call the deleteExperience action and pass in the ID of the experience (exp._id) */}
+        <button
+          onClick={() => deleteExperience(exp._id)}
+          className="btn btn-danger"
+        >
+          Delete
+        </button>
       </td>
     </tr>
   ));
@@ -54,7 +62,12 @@ const Experience = ({ experience }) => {
 };
 
 Experience.propTypes = {
-  experience: PropTypes.array.isRequired
+  experience: PropTypes.array.isRequired,
+  deleteExperience: PropTypes.func.isRequired
 };
 
-export default Experience;
+// "experience" doesn't need to be passed into connect() b/c it comes from a parent component (Dashboasrd.js)
+export default connect(
+  null,
+  { deleteExperience }
+)(Experience);

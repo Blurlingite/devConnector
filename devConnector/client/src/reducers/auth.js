@@ -7,7 +7,8 @@ import {
   AUTH_ERROR,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT
+  LOGOUT,
+  ACCOUNT_DELETED
 } from "../actions/types";
 
 // this is the initial state object, representing the initial state of auth.js
@@ -55,6 +56,7 @@ export default function(state = initialState, action) {
     // removeItem() only needs the key to remove the token
     case LOGIN_FAIL: // does the same thing as "REGISTER_FAIL"
     case LOGOUT:
+    case ACCOUNT_DELETED:
       localStorage.removeItem("token");
       return {
         ...state, // all of whatever is currently in the state

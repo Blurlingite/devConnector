@@ -15,3 +15,4 @@ export const UPDATE_PROFILE = "UPDATE_PROFILE";
 // used to clear a profile when logged out so old user's profile data is not still loaded into redux when you login with a different user
 export const CLEAR_PROFILE = "CLEAR_PROFILE";
 export const PROFILE_ERROR = "PROFILE_ERROR";
+export const ACCOUNT_DELETED = "ACCOUNT_DELETED";
