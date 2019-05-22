@@ -7,6 +7,8 @@ import { connect } from "react-redux";
 
 import Spinner from "../layout/Spinner";
 import DashboardActions from "./DashboardActions";
+import Experience from "./Experience";
+import Education from "./Education";
 
 import { getCurrentProfile } from "../../actions/profile";
 
@@ -47,6 +49,10 @@ const Dashboard = ({
       {profile !== null ? (
         <Fragment>
           <DashboardActions />
+          {/* need to pass in the experience array, b/c that will be passed into and used in the Experience component(Experience.js)
+          We can get that from the profile object we passed in above */}
+          <Experience experience={profile.experience} />
+          <Education education={profile.education} />
         </Fragment>
       ) : (
         <Fragment>
