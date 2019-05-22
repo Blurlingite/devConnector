@@ -48,7 +48,7 @@ export const createProfile = (
 
     // set an alert
     // if there was an edit ("?"), say "Profile Updated", otherwise (":") say "Profile Created"
-    dispatch(setAlert(edit ? "Profile Updated" : "Profile Created"));
+    dispatch(setAlert(edit ? "Profile Updated" : "Profile Created", "success"));
 
     // if there was not an edit, but you are creating a new profile (if ur came to this action you would be) then redirect to the "/dashboard" endpoint, which is the dashboard page in the browser
     if (!edit) {

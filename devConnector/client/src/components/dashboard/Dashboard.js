@@ -4,7 +4,10 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 // Spinner component that will be used to show a spinner when profile cannot be loaded
+
 import Spinner from "../layout/Spinner";
+import DashboardActions from "./DashboardActions";
+
 import { getCurrentProfile } from "../../actions/profile";
 
 // pull out "profile" (state of profile) and "loading" from "profile" being passed in
@@ -42,7 +45,9 @@ const Dashboard = ({
 
       {/* if profile is not null use "has", otherwise (:) use "has not" */}
       {profile !== null ? (
-        <Fragment>has</Fragment>
+        <Fragment>
+          <DashboardActions />
+        </Fragment>
       ) : (
         <Fragment>
           <p>You have not yet setup a profile, please add some info</p>

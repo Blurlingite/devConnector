@@ -1,19 +1,20 @@
-// Section 9 Lecture 47
-// each form inout should be a piece of state so we use the useState hook
-import React, { Fragment, useState } from "react";
+// Section 9 Lecture 49  ----- See CreateProfile.js for comments
+import React, { Fragment, useState, useEffect } from "react";
 // "withRouter" to use the "history" object (also used in profile.js in the "actions folder"). It lets us to redirect from the action
 import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { createProfile } from "../../actions/profile";
+// we bring in "createProfile" b/c it can also be used to edit a profile
+// we also bring in "getCurrentProfile" so we can pre-fill the fields
+import { createProfile, getCurrentProfile } from "../../actions/profile";
 
-// we pull out "createProfile" and "history" from the props object b/c that's all we need here
-const CreateProfile = ({ createProfile, history }) => {
-  // see Register.js for more comments
-
-  // are we setting these values to both formData & setFormData???
+const EditProfile = ({
+  profile: { profile, loading },
+  createProfile,
+  getCurrentProfile,
+  history
+}) => {
   const [formData, setFormData] = useState({
-    // these are all the profile fields from Profile model in "models" folder
     company: "",
     website: "",
     location: "",
@@ -28,11 +29,35 @@ const CreateProfile = ({ createProfile, history }) => {
     instagram: ""
   });
 
-  // the default state for "displaySocialInputs" & "toggleSocialInputs" is set to false thanks to useState()
-  // this will be used to hide the social media inputs until you click the "Add Social Network" button, by setting the state to false, we can hide them
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
-  // pull out these fields from formData
+  useEffect(
+    () => {
+      getCurrentProfile();
+
+      // use setFormData from above to fill in fields on form, but you must check for each field first
+      setFormData({
+        // If the page is loading ("loading") or there is nothing in the company field (|| !profile.company) then make it empty. Otherwise, fill in the field with the company that came in when you called getCurrentProfile() above  with "profile.company"
+        company: loading || !profile.company ? "" : profile.company,
+        website: loading || !profile.website ? "" : profile.website,
+        location: loading || !profile.location ? "" : profile.location,
+        status: loading || !profile.status ? "" : profile.status,
+        // skills is an array so we need the .join(",") to get all the skills in the array and join them into 1 string to be displayed on the webpage
+        skills: loading || !profile.skills ? "" : profile.skills.join(","),
+        githubusername:
+          loading || !profile.githubusername ? "" : profile.githubusername,
+        bio: loading || !profile.bio ? "" : profile.bio,
+
+        // for the social media stuff, we also need to check if the social object (the object that all the social media fields are in) exists. You cannot just say profile.twitter for example
+        twitter: loading || !profile.social ? "" : profile.social.twitter,
+        facebook: loading || !profile.social ? "" : profile.social.facebook,
+        linkedin: loading || !profile.social ? "" : profile.social.linkedin,
+        youtube: loading || !profile.social ? "" : profile.social.youtube,
+        instagram: loading || !profile.social ? "" : profile.social.instagram
+      });
+    },
+    [loading] // with useEffect() we need at least an empty sqaure brackets or it'll keep running. However, we put loading in the square brackets so that this useEffect() call depends on the loading object(boolean). That means this useEffect() will only run if loading is true, meaning if the profile is still loading. (If we put !loading then, it would only run if loading is false)
+  );
   const {
     company,
     website,
@@ -54,9 +79,8 @@ const CreateProfile = ({ createProfile, history }) => {
 
   const onSubmit = e => {
     e.preventDefault();
-    // submit the action "createProfile" which creates a profile using data from a form (the "formData" variable we've been using) and the "history" object to redirect to another endpoint
-
-    createProfile(formData, history);
+    // the "true" parameter makes it so that when we are editing a profile, it will redirect back to the dashboard page after we submit. How does it do that? Maybe it has something to do with the 2nd "history" param
+    createProfile(formData, history, true);
   };
 
   return (
@@ -67,7 +91,6 @@ const CreateProfile = ({ createProfile, history }) => {
         profile stand out
       </p>
       <small>* = required field</small>
-      {/* onSubmit() is the const we made above */}
       <form className="form" onSubmit={e => onSubmit(e)}>
         <div className="form-group">
           <select name="status" value={status} onChange={e => onChange(e)}>
@@ -154,9 +177,6 @@ const CreateProfile = ({ createProfile, history }) => {
 
         <div className="my-2">
           <button
-            // we set toggleSocialInputs to the opposite of what "displaySocialInputs" is with "!displaySocialInputs". If "displaySocialInputs" is false, toggleSocialInputs is true and vice-versa. This will let us show the media inputs when we click the button the first time and hide them when we click again.
-            // Since toggleSocialInputs & displaySocialInputs both use the same state as we said here:   const [displaySocialInputs, toggleSocialInputs] = useState(false);   when toggleSocialInputs is false, displaySocialInputs becomes false and if toggleSocialInputs is true, displaySocialInputs becomes true
-
             onClick={() => toggleSocialInputs(!displaySocialInputs)}
             type="button"
             className="btn btn-light"
@@ -166,7 +186,6 @@ const CreateProfile = ({ createProfile, history }) => {
           <span>Optional</span>
         </div>
 
-        {/* If displaySocialInputs is true, show this Fragment that has all the social media inputs */}
         {displaySocialInputs && (
           <Fragment>
             <div className="form-group social-input">
@@ -235,12 +254,18 @@ const CreateProfile = ({ createProfile, history }) => {
   );
 };
 
-CreateProfile.propTypes = {
-  createProfile: PropTypes.func.isRequired
+EditProfile.propTypes = {
+  createProfile: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired
 };
 
-// we wrap "CreateProfile" in "withRouter" b/c we used the "history" object in that compopnent, otherwise we can't pass in the history object and use it from the action
+const mapStateToProps = state => ({
+  profile: state.profile
+});
+
+// "getCurrentProfile" was also imported above
 export default connect(
-  null,
-  { createProfile }
-)(withRouter(CreateProfile));
+  mapStateToProps,
+  { createProfile, getCurrentProfile }
+)(withRouter(EditProfile));
