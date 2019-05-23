@@ -3,10 +3,12 @@ import { setAlert } from "./alert";
 
 import {
   GET_PROFILE,
+  GET_PROFILES,
   UPDATE_PROFILE,
   PROFILE_ERROR,
   CLEAR_PROFILE,
-  ACCOUNT_DELETED
+  ACCOUNT_DELETED,
+  GET_REPOS
 } from "./types";
 import { truncate } from "fs";
 
@@ -18,6 +20,68 @@ export const getCurrentProfile = () => async dispatch => {
 
     dispatch({
       type: GET_PROFILE,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get all profiles - Section 10 Lecture 53
+
+export const getProfiles = () => async dispatch => {
+  dispatch({
+    type: CLEAR_PROFILE
+  });
+  try {
+    // "/api/profile/me" comes from your backend in the route in "routes" folder in profile.js
+    const res = await axios.get("/api/profile");
+
+    dispatch({
+      type: GET_PROFILES,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get profile by ID - Section 10 Lecture 53
+
+// must take in "userId" b/c we are getting it by the user ID not the profile ID
+export const getProfileById = userId => async dispatch => {
+  try {
+    // "/api/profile/me" comes from your backend in the route in "routes" folder in profile.js
+    const res = await axios.get(`/api/profile/user/${userId}`);
+
+    dispatch({
+      type: GET_PROFILES,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get all GitHub repos - Section 10 Lecture 53
+
+// takes in the github username ("username")
+export const getGitHubRepos = username => async dispatch => {
+  try {
+    // "/api/profile/me" comes from your backend in the route in "routes" folder in profile.js
+    const res = await axios.get(`/api/profile/github/${username}`);
+
+    dispatch({
+      type: GET_REPOS,
       payload: res.data
     });
   } catch (err) {
