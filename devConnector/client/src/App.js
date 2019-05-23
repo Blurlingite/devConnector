@@ -11,6 +11,7 @@ import CreateProfile from "./components/profile-forms/CreateProfile";
 import EditProfile from "./components/profile-forms/EditProfile";
 import AddExperience from "./components/profile-forms/AddExperience";
 import AddEducation from "./components/profile-forms/AddEducation";
+import Profiles from "./components/profiles/Profiles";
 import PrivateRoute from "./components/routing/PrivateRoute";
 
 // Redux
@@ -62,6 +63,8 @@ const App = () => {
               {/* This component will only show up when the URL ends with "/register" */}
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
+              <Route exact path="/profiles" component={Profiles} />
+
               {/* thanks to PrivateRoute whenever you logout, you cannot access the dashboard page anymore. PrivateRoute protects the dashboard page and will redirect you back to the Sign In page if you are not authenticated  */}
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
 

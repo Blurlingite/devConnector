@@ -37,7 +37,7 @@ export const getProfiles = () => async dispatch => {
     type: CLEAR_PROFILE
   });
   try {
-    // "/api/profile/me" comes from your backend in the route in "routes" folder in profile.js
+    // "/api/profile" comes from your backend in the route in "routes" folder in profile.js
     const res = await axios.get("/api/profile");
 
     dispatch({
