@@ -12,6 +12,7 @@ import EditProfile from "./components/profile-forms/EditProfile";
 import AddExperience from "./components/profile-forms/AddExperience";
 import AddEducation from "./components/profile-forms/AddEducation";
 import Profiles from "./components/profiles/Profiles";
+import Profile from "./components/profile/Profile";
 import PrivateRoute from "./components/routing/PrivateRoute";
 
 // Redux
@@ -64,6 +65,8 @@ const App = () => {
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/profiles" component={Profiles} />
+              {/* the "Profile component gets the ID from the URL so we need to include ":id" so it can be passed into and used by the "Profile component" */}
+              <Route exact path="/profile/:id" component={Profile} />
 
               {/* thanks to PrivateRoute whenever you logout, you cannot access the dashboard page anymore. PrivateRoute protects the dashboard page and will redirect you back to the Sign In page if you are not authenticated  */}
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
