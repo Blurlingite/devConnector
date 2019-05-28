@@ -14,7 +14,7 @@ const Profiles = ({ getProfiles, profile: { profiles, loading } }) => {
   // Next, we go to App.js and add code to make sure profiles get put in the state
   useEffect(() => {
     getProfiles();
-  }, []);
+  }, [getProfiles]); // add getProfiles as a dependency so annoying warning doesn't show
 
   return (
     // If loading is true (if still loading), show the spinner gif (<Spinner />). Else, go through the array of profiles (from "profiles") and print each one to the webpage (using the <ProfileItem/> component)

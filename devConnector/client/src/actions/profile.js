@@ -10,7 +10,6 @@ import {
   ACCOUNT_DELETED,
   GET_REPOS
 } from "./types";
-import { truncate } from "fs";
 
 // get current user's profile of whatever user that is logged in
 export const getCurrentProfile = () => async dispatch => {
@@ -265,7 +264,7 @@ export const deleteAccount = () => async dispatch => {
   if (window.confirm("Are you sure? This can NOT be undone!")) {
     try {
       // we have to use backticks (`) instead of quotes b/c we have a path variable in the URL. That path variable is the ID of the experience (${id})
-      const res = await axios.delete("/api/profile");
+      await axios.delete("/api/profile");
 
       // no payload needed
       dispatch({

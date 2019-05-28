@@ -22,7 +22,8 @@ const Dashboard = ({
   // we want to call getCurrentProfile as soon as this component loads
   useEffect(() => {
     getCurrentProfile();
-  }, []);
+    // add getCurrentProfile as a dependency so annoying warning doesn't show
+  }, [getCurrentProfile]);
 
   // profile is null and is still loading, show the spinner gif
   return loading && profile === null ? (

@@ -56,7 +56,8 @@ const EditProfile = ({
         instagram: loading || !profile.social ? "" : profile.social.instagram
       });
     },
-    [loading] // with useEffect() we need at least an empty sqaure brackets or it'll keep running. However, we put loading in the square brackets so that this useEffect() call depends on the loading object(boolean). That means this useEffect() will only run if loading is true, meaning if the profile is still loading. (If we put !loading then, it would only run if loading is false)
+    // add getCurrentProfile as a dependency so annoying warning doesn't show
+    [loading, getCurrentProfile] // with useEffect() we need at least an empty sqaure brackets or it'll keep running. However, we put loading in the square brackets so that this useEffect() call depends on the loading object(boolean). That means this useEffect() will only run if loading is true, meaning if the profile is still loading. (If we put !loading then, it would only run if loading is false)
   );
   const {
     company,
