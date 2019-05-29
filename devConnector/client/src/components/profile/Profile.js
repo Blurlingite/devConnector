@@ -8,6 +8,9 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
+import ProfileTop from "./ProfileTop";
+import ProfileAbout from "./ProfileAbout";
+
 import { getProfileById } from "../../actions/profile";
 
 // we pull out "match" from the URL. The URL has the ID and we can access it with "match"
@@ -20,7 +23,7 @@ const Profile = ({
   // immediately when the profile mounts, getProfileById() will get the profile
   useEffect(() => {
     getProfileById(match.params.id); // NOT _id maybe b/c it comes from the URL and not the online database?
-  }, [getProfileById]);
+  }, [getProfileById, match.params.id]);
   return (
     <Fragment>
       {/* check if profile is loaded. While loading show the spinner gif. Otherwise, show the profile */}
@@ -40,6 +43,12 @@ const Profile = ({
                 Edit Profile
               </Link> // Show the Edit Button
             )}
+
+          <div class="profile-grid my-1">
+            {/* The upper part of the profile. We pass in the profile data */}
+            <ProfileTop profile={profile} />
+            <ProfileAbout profile={profile} />
+          </div>
         </Fragment>
       )}
     </Fragment>
