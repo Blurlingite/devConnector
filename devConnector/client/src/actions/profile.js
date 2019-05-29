@@ -74,7 +74,7 @@ export const getProfileById = userId => async dispatch => {
 // Get all GitHub repos - Section 10 Lecture 53
 
 // takes in the github username ("username")
-export const getGitHubRepos = username => async dispatch => {
+export const getGithubRepos = username => async dispatch => {
   try {
     // "/api/profile/me" comes from your backend in the route in "routes" folder in profile.js
     const res = await axios.get(`/api/profile/github/${username}`);
