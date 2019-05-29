@@ -10,7 +10,9 @@ import auth from "./auth";
 
 import profile from "./profile";
 
+import post from "./post";
+
 // this will contain all the reducers you make (and also import into this file), whenever you make a new reducer (like one for auth.js for example) make sure you pass it in here
-export default combineReducers({ alert, auth, profile });
+export default combineReducers({ alert, auth, profile, post });
 
 // now if you go into your Chrome browser, open up the console and click on Redux, the store will be setup
