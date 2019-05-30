@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
 import PostItem from "../posts/PostItem";
+import CommentForm from "../post/CommentForm";
 import { getPost } from "../../actions/post";
 
 // from the post state (post:) we pull the post itself (post) and loading
@@ -28,6 +29,7 @@ const Post = ({ getPost, post: { post, loading }, match }) => {
       {/* PostItem needs 2 arguments, post & showActions.
       showActions is passed "false" so the buttons don't appear (the code for that is in the PostItem component)  */}
       <PostItem post={post} showActions={false} />
+      <CommentForm postId={post._id} />
     </Fragment>
   );
 };

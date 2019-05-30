@@ -7,7 +7,9 @@ import {
   UPDATE_LIKES,
   DELETE_POST,
   ADD_POST,
-  GET_POST
+  GET_POST,
+  ADD_COMMENT,
+  REMOVE_COMMENT
 } from "./types";
 
 // Get posts
@@ -109,8 +111,6 @@ export const addPost = formData => async dispatch => {
 
     dispatch({
       type: ADD_POST,
-      // "id" is the post's ID
-      // the data that comes back are the "likes" so we assign it res.data
       payload: res.data
     });
 
@@ -133,6 +133,62 @@ export const getPost = id => async dispatch => {
       type: GET_POST,
       payload: res.data
     });
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Add comment
+// takes in the post's ID so it know which post to add the comment to
+// takes in formData (data from a form that makes up the comment)
+export const addComment = (postId, formData) => async dispatch => {
+  // need a config b/c ur sending data
+  const config = {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  };
+  try {
+    // the endpoint comes from your backend
+    const res = await axios.post(
+      `/api/posts/comment/${postId}`,
+      formData,
+      config
+    );
+
+    dispatch({
+      type: ADD_COMMENT,
+      // when we add a comment it returns an array of comments. That array will be the res.data
+      payload: res.data
+    });
+
+    dispatch(setAlert("Comment Added", "success"));
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Delete comment
+// takes in the post's ID so it know which post to add the comment to
+// takes in the comment's ID so we know which comment to delete
+export const deleteComment = (postId, commentId) => async dispatch => {
+  try {
+    // the endpoint comes from your backend
+    const res = await axios.delete(`/api/posts/comment/${postId}/${commentId}`);
+
+    dispatch({
+      type: REMOVE_COMMENT,
+      // the payload is the comment's ID so we know which one to remove in state
+      payload: commentId
+    });
+
+    dispatch(setAlert("Comment Removed", "success"));
   } catch (err) {
     dispatch({
       type: POST_ERROR,

@@ -5,7 +5,9 @@ import {
   UPDATE_LIKES,
   DELETE_POST,
   ADD_POST,
-  GET_POST
+  GET_POST,
+  ADD_COMMENT,
+  REMOVE_COMMENT
 } from "../actions/types";
 
 const initialState = {
@@ -46,7 +48,7 @@ export default function(state = initialState, action) {
     case DELETE_POST:
       return {
         ...state,
-        // we use filter() to filter out the one post that got deleted so it doesn't show up anymore.
+        // we use filter() to filter out the one post that got deleted so it doesn't show up anymore. It got deleted from the server, so we need to delete it from the state (in the redux container)
         // If the post's ID (post._id) is equal to the ID in the payload ("payload", since only id is in the payload as shown in post.js in the "actions" folder)
         posts: state.posts.filter(post => post._id !== payload),
         loading: false
@@ -69,6 +71,24 @@ export default function(state = initialState, action) {
         posts: state.posts.map(post =>
           post._id === payload.id ? { ...post, likes: payload.likes } : post
         ),
+        loading: false
+      };
+
+    case ADD_COMMENT:
+      return {
+        ...state,
+        post: { ...state.post, comments: payload },
+        loading: false
+      };
+    case REMOVE_COMMENT:
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: state.post.comments.filter(
+            comment => comment._id !== payload
+          )
+        },
         loading: false
       };
 
