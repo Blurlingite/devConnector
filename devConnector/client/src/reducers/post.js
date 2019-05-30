@@ -3,7 +3,8 @@ import {
   GET_POSTS,
   POST_ERROR,
   UPDATE_LIKES,
-  DELETE_POST
+  DELETE_POST,
+  ADD_POST
 } from "../actions/types";
 
 const initialState = {
@@ -21,6 +22,16 @@ export default function(state = initialState, action) {
       return {
         ...state,
         posts: payload,
+        loading: false
+      };
+
+    case ADD_POST:
+      return {
+        ...state,
+        // "...state.posts" makes a copy of all the posts in the state. Then we add the new post that comes in with the payload. We put these things in an array b/c it's just a collection of posts, and we assign it to the "posts" field
+        // Any component that uses the "posts" part of the state will have access to the new post
+        // we put payload first so that the newest post is the first and will be displayed above the older ones. If you want it to be at the bottom, just switch the order to ...state.posts,payload
+        posts: [payload, ...state.posts],
         loading: false
       };
 

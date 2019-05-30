@@ -1,7 +1,13 @@
 // Section 11 Lecture 60 - Post Reducer, Action & Initial
 import axios from "axios";
 import { setAlert } from "./alert";
-import { GET_POSTS, POST_ERROR, UPDATE_LIKES, DELETE_POST } from "./types";
+import {
+  GET_POSTS,
+  POST_ERROR,
+  UPDATE_LIKES,
+  DELETE_POST,
+  ADD_POST
+} from "./types";
 
 // Get posts
 export const getPosts = () => async dispatch => {
@@ -68,7 +74,7 @@ export const removeLike = id => async dispatch => {
 export const deletePost = id => async dispatch => {
   try {
     // the endpoint comes from your backend
-    const res = await axios.delete(`/api/posts/${id}`);
+    await axios.delete(`/api/posts/${id}`);
 
     dispatch({
       type: DELETE_POST,
@@ -78,6 +84,36 @@ export const deletePost = id => async dispatch => {
     });
 
     dispatch(setAlert("Post Removed", "success"));
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Add post
+// takes in formData (data from a form)
+export const addPost = formData => async dispatch => {
+  // need a config b/c ur sending data
+  const config = {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  };
+  try {
+    // the endpoint comes from your backend
+    // you can use backticks even when you don't need to pass in a parameter, it's up to you. Many developers just always use backticks
+    const res = await axios.post(`/api/posts`, formData, config);
+
+    dispatch({
+      type: ADD_POST,
+      // "id" is the post's ID
+      // the data that comes back are the "likes" so we assign it res.data
+      payload: res.data
+    });
+
+    dispatch(setAlert("Post Created", "success"));
   } catch (err) {
     dispatch({
       type: POST_ERROR,
