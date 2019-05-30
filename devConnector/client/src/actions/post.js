@@ -1,7 +1,7 @@
 // Section 11 Lecture 60 - Post Reducer, Action & Initial
 import axios from "axios";
 import { setAlert } from "./alert";
-import { GET_POSTS, POST_ERROR, UPDATE_LIKES } from "./types";
+import { GET_POSTS, POST_ERROR, UPDATE_LIKES, DELETE_POST } from "./types";
 
 // Get posts
 export const getPosts = () => async dispatch => {
@@ -55,6 +55,29 @@ export const removeLike = id => async dispatch => {
       // the data that comes back are the "likes" so we assign it res.data
       payload: { id, likes: res.data }
     });
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Delete post
+// takes in id so it knows which post to delete
+export const deletePost = id => async dispatch => {
+  try {
+    // the endpoint comes from your backend
+    const res = await axios.delete(`/api/posts/${id}`);
+
+    dispatch({
+      type: DELETE_POST,
+      // "id" is the post's ID
+      // the data that comes back are the "likes" so we assign it res.data
+      payload: id
+    });
+
+    dispatch(setAlert("Post Removed", "success"));
   } catch (err) {
     dispatch({
       type: POST_ERROR,

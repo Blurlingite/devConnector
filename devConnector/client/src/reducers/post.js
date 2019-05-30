@@ -1,5 +1,10 @@
 // Section 11 Lecture 60 - Post Reducer, Action & Initial
-import { GET_POSTS, POST_ERROR, UPDATE_LIKES } from "../actions/types";
+import {
+  GET_POSTS,
+  POST_ERROR,
+  UPDATE_LIKES,
+  DELETE_POST
+} from "../actions/types";
 
 const initialState = {
   posts: [],
@@ -16,6 +21,15 @@ export default function(state = initialState, action) {
       return {
         ...state,
         posts: payload,
+        loading: false
+      };
+
+    case DELETE_POST:
+      return {
+        ...state,
+        // we use filter() to filter out the one post that got deleted so it doesn't show up anymore.
+        // If the post's ID (post._id) is equal to the ID in the payload ("payload", since only id is in the payload as shown in post.js in the "actions" folder)
+        posts: state.posts.filter(post => post._id !== payload),
         loading: false
       };
 
