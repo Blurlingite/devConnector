@@ -5,8 +5,11 @@ import { Link } from "react-router-dom";
 import Moment from "react-moment";
 // used when we add a like, remove a like, delete a post,etc
 import { connect } from "react-redux";
+import { addLike, removeLike } from "../../actions/post";
 
 const PostItem = ({
+  addLike,
+  removeLike,
   auth,
   post: { _id, text, name, avatar, user, likes, comments, date }
 }) => (
@@ -23,12 +26,17 @@ const PostItem = ({
         {" "}
         Posted on <Moment format="YYYY/MM/DD">{date}</Moment>
       </p>
-      <button type="button" class="btn btn-light">
+      {/* With this onClick, when the button is clicked, we call the addLike() action and pass in the post's ID which we destructured above as _id.  This will let us like the post*/}
+      <button onClick={e => addLike(_id)} type="button" class="btn btn-light">
         <i class="fas fa-thumbs-up" />{" "}
         {/* check if there are likes and then show how many there are of there are some (in the span tag) */}
         <span> {likes.length > 0 && <span>{likes.length}</span>}</span>
       </button>
-      <button type="button" class="btn btn-light">
+      <button
+        onClick={e => removeLike(_id)}
+        type="button"
+        class="btn btn-light"
+      >
         <i class="fas fa-thumbs-down" />
       </button>
       {/* we want to be linked to the post so we use backticks and pass in the ID (_id) */}
@@ -67,5 +75,5 @@ const mapStateToProps = state => ({
 });
 export default connect(
   mapStateToProps,
-  {}
+  { addLike, removeLike }
 )(PostItem);
