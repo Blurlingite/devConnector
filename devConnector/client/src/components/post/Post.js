@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
 import PostItem from "../posts/PostItem";
 import CommentForm from "../post/CommentForm";
+import CommentItem from "../post/CommentItem";
 import { getPost } from "../../actions/post";
 
 // from the post state (post:) we pull the post itself (post) and loading
@@ -30,6 +31,14 @@ const Post = ({ getPost, post: { post, loading }, match }) => {
       showActions is passed "false" so the buttons don't appear (the code for that is in the PostItem component)  */}
       <PostItem post={post} showActions={false} />
       <CommentForm postId={post._id} />
+
+      <div className="comments">
+        {post.comments.map(comment => (
+          // In comment={comment}, {comment} will be the words of the comment
+          // _id is taken from the Mongo online Database
+          <CommentItem key={comment._id} comment={comment} postId={post._id} />
+        ))}
+      </div>
     </Fragment>
   );
 };
