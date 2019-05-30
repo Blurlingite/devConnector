@@ -19,6 +19,7 @@ export const PROFILE_ERROR = "PROFILE_ERROR";
 export const ACCOUNT_DELETED = "ACCOUNT_DELETED";
 export const GET_REPOS = "GET_REPOS";
 export const GET_POSTS = "GET_POSTS";
+export const GET_POST = "GET_POST";
 export const POST_ERROR = "POST_ERROR";
 // this action fires off when you add a like or remove a like from a post
 export const UPDATE_LIKES = "UPDATE_LIKES";
