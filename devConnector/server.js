@@ -43,7 +43,7 @@ if (process.env.NODE_ENV === "production") {
     // __dirname is the current directory (which we are going from)
     // We put "client" b/c we want to go into the client folder
     // We put "build" b/c we want to go into the build folder in the client folder
-    // We put "index.html" b/c that is the file we want to load (that is in the build folder which is in the client folder)
+    // We put "index.html" b/c that is the file we want to load (that is in the build folder which is in the client folder.)
 
     res.sendFile(path.resolves(__dirname, "client", "build", "index.html"));
   });
