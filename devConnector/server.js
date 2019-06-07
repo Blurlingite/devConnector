@@ -6,7 +6,7 @@ const express = require("express");
 // the ./ returns you to the devconnector folder (the root, the beginning)
 const connectDB = require("./config/db");
 
-// path is a core node module used to manipulate file paths. We are using it so we can deploy this application to heroku
+// path is a core node module used to manipulate file paths. We are using it so we can deploy this application to heroku.
 const path = require("path");
 
 const app = express();
